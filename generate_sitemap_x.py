@@ -9,21 +9,21 @@ def fetch_sitemap(url):
     response.raise_for_status()
     return response.text
 
-def filter_sitemaps_for_x(xml_text):
+def filter_english_sitemaps(xml_text):
     """
-    Currently this script passes through all English sitemaps.
-    It is labeled as X-specific purely by output naming.
+    Keep only English sitemaps.
+    This script is X-specific by output naming and repo context.
     """
     ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
     root = ET.fromstring(xml_text)
-    urls = []
+    english_urls = []
 
     for sitemap in root.findall("sm:sitemap", ns):
         loc = sitemap.find("sm:loc", ns)
-        if loc is not None:
-            urls.append(loc.text)
+        if loc is not None and "/en/" in loc.text:
+            english_urls.append(loc.text)
 
-    return urls
+    return english_urls
 
 def generate_sitemap_xml(urls):
     ns = "http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -38,13 +38,13 @@ def generate_sitemap_xml(urls):
 
 def main():
     xml_text = fetch_sitemap(SITEMAP_URL)
-    urls = filter_sitemaps_for_x(xml_text)
-    sitemap_xml = generate_sitemap_xml(urls)
+    english_urls = filter_english_sitemaps(xml_text)
+    sitemap_xml = generate_sitemap_xml(english_urls)
 
     with open(OUTPUT_FILE, "wb") as f:
         f.write(sitemap_xml)
 
-    print(f"X sitemap generated: {OUTPUT_FILE}")
+    print(f"English sitemap for X generated: {OUTPUT_FILE}")
 
 if __name__ == "__main__":
     main()
