@@ -2,7 +2,7 @@ name: Daily Sitemap – X
 
 on:
   schedule:
-    - cron: "0 0 * * *"   # daily at midnight UTC
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 jobs:
@@ -19,12 +19,10 @@ jobs:
           python-version: "3.x"
 
       - name: Install dependencies
-        run: |
-          pip install requests
+        run: pip install requests
 
-      - name: Generate sitemap for X
-        run: |
-          python generate_sitemap_x.py
+      - name: Generate English sitemap for X
+        run: python generate_sitemap_x.py
 
       - name: Commit and push sitemap
         run: |
@@ -32,5 +30,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add sitemap-x.xml
-          git diff-index --quiet HEAD || git commit -m "Update sitemap for X [skip ci]"
+          git diff-index --quiet HEAD || git commit -m "Update English sitemap for X [skip ci]"
           git push origin main
